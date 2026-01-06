@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-01-06
+
+### Changes
+
+- [FIX] Add docs build test to CI and fix documentation errors (840fd5a)
+
 ## [0.2.0] - 2026-01-06
 
 ### Changes
