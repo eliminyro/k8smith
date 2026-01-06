@@ -2,7 +2,7 @@
 
 This guide demonstrates generating a complete set of Kubernetes resources for a production web application with:
 
-- ServiceAccount (with GKE Workload Identity)
+- ServiceAccount
 - ConfigMap (application configuration)
 - Secret (database credentials)
 - Deployment (with probes, resources, security context, affinity)
@@ -66,7 +66,7 @@ SELECTOR = {"app.kubernetes.io/name": APP_NAME}
 
 ## ServiceAccount
 
-Create a ServiceAccount with GKE Workload Identity annotation:
+Create a ServiceAccount for the application:
 
 ```python
 def create_service_account() -> dict:
@@ -75,9 +75,6 @@ def create_service_account() -> dict:
             name=APP_NAME,
             namespace=NAMESPACE,
             labels=COMMON_LABELS,
-            annotations={
-                "iam.gke.io/gcp-service-account": f"{APP_NAME}@myproject.iam.gserviceaccount.com",
-            },
         )
     )
 ```
@@ -250,9 +247,9 @@ def create_deployment() -> dict:
                     ],
                     tolerations=[
                         Toleration(
-                            key="cloud.google.com/gke-spot",
+                            key="dedicated",
                             operator="Equal",
-                            value="true",
+                            value="web",
                             effect="NoSchedule",
                         ),
                     ],

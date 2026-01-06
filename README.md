@@ -25,9 +25,6 @@ uv add k8smith
 ## Quick Start
 
 ```python
-import k8smith as kk
-
-# Create a deployment
 from k8smith import (
     DeploymentSpec,
     Container,
