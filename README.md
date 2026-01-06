@@ -1,8 +1,8 @@
 # k8smith
 
-[![CI](https://github.com/eliminyro/k8smith/actions/workflows/ci.yml/badge.svg)](https://github.com/eliminyro/k8smith/actions/workflows/ci.yml)
-[![PyPI version](https://badge.fury.io/py/k8smith.svg)](https://pypi.org/project/k8smith/)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/eliminyro/k8smith/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/eliminyro/k8smith/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/k8smith)](https://pypi.org/project/k8smith/)
+[![Python 3.11+](https://img.shields.io/pypi/pyversions/k8smith)](https://pypi.org/project/k8smith/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 A transparent, lightweight Kubernetes manifest generator.

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-01-06
+
+### Changes
+
+- [FEAT] Initial release - k8smith Kubernetes manifest generator (159b1a7)
+
 - Core Kubernetes resources: Deployment, Service, StatefulSet, DaemonSet, CronJob, ConfigMap, Secret, HPA, PDB, ServiceAccount, Namespace
 - RBAC resources: Role, ClusterRole, RoleBinding, ClusterRoleBinding
 - GKE extensions: Gateway, HTTPRoute, HealthCheckPolicy, GCPBackendPolicy, PodMonitoring, ClusterPodMonitoring
