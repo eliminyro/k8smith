@@ -953,7 +953,7 @@
 <h1 id="production-web-app">Production Web App<a class="headerlink" href="#production-web-app" title="Permanent link">&para;</a></h1>
 <p>This guide demonstrates generating a complete set of Kubernetes resources for a production web application with:</p>
 <ul>
-<li>ServiceAccount (with GKE Workload Identity)</li>
+<li>ServiceAccount</li>
 <li>ConfigMap (application configuration)</li>
 <li>Secret (database credentials)</li>
 <li>Deployment (with probes, resources, security context, affinity)</li>
@@ -1012,18 +1012,15 @@
 <a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="n">SELECTOR</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;app.kubernetes.io/name&quot;</span><span class="p">:</span> <span class="n">APP_NAME</span><span class="p">}</span>
 </code></pre></div>
 <h2 id="serviceaccount">ServiceAccount<a class="headerlink" href="#serviceaccount" title="Permanent link">&para;</a></h2>
-<p>Create a ServiceAccount with GKE Workload Identity annotation:</p>
+<p>Create a ServiceAccount for the application:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">create_service_account</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">return</span> <span class="n">build_serviceaccount</span><span class="p">(</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="n">ServiceAccountSpec</span><span class="p">(</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>            <span class="n">name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>            <span class="n">namespace</span><span class="o">=</span><span class="n">NAMESPACE</span><span class="p">,</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>            <span class="n">labels</span><span class="o">=</span><span class="n">COMMON_LABELS</span><span class="p">,</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>            <span class="n">annotations</span><span class="o">=</span><span class="p">{</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                <span class="s2">&quot;iam.gke.io/gcp-service-account&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">APP_NAME</span><span class="si">}</span><span class="s2">@myproject.iam.gserviceaccount.com&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>            <span class="p">},</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="p">)</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="p">)</span>
 </code></pre></div>
 <h2 id="configmap">ConfigMap<a class="headerlink" href="#configmap" title="Permanent link">&para;</a></h2>
 <p>Store application configuration in a ConfigMap:</p>
@@ -1183,9 +1180,9 @@
 <a id="__codelineno-4-105" name="__codelineno-4-105" href="#__codelineno-4-105"></a>                    <span class="p">],</span>
 <a id="__codelineno-4-106" name="__codelineno-4-106" href="#__codelineno-4-106"></a>                    <span class="n">tolerations</span><span class="o">=</span><span class="p">[</span>
 <a id="__codelineno-4-107" name="__codelineno-4-107" href="#__codelineno-4-107"></a>                        <span class="n">Toleration</span><span class="p">(</span>
-<a id="__codelineno-4-108" name="__codelineno-4-108" href="#__codelineno-4-108"></a>                            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;cloud.google.com/gke-spot&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-108" name="__codelineno-4-108" href="#__codelineno-4-108"></a>                            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;dedicated&quot;</span><span class="p">,</span>
 <a id="__codelineno-4-109" name="__codelineno-4-109" href="#__codelineno-4-109"></a>                            <span class="n">operator</span><span class="o">=</span><span class="s2">&quot;Equal&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-110" name="__codelineno-4-110" href="#__codelineno-4-110"></a>                            <span class="n">value</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-110" name="__codelineno-4-110" href="#__codelineno-4-110"></a>                            <span class="n">value</span><span class="o">=</span><span class="s2">&quot;web&quot;</span><span class="p">,</span>
 <a id="__codelineno-4-111" name="__codelineno-4-111" href="#__codelineno-4-111"></a>                            <span class="n">effect</span><span class="o">=</span><span class="s2">&quot;NoSchedule&quot;</span><span class="p">,</span>
 <a id="__codelineno-4-112" name="__codelineno-4-112" href="#__codelineno-4-112"></a>                        <span class="p">),</span>
 <a id="__codelineno-4-113" name="__codelineno-4-113" href="#__codelineno-4-113"></a>                    <span class="p">],</span>
