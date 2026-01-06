@@ -5,7 +5,7 @@ description = "A transparent, lightweight Kubernetes manifest generator"
 readme = "README.md"
 license = { text = "GPL-3.0-only" }
 authors = [
-    { name = "pe" }
+    { name = "Pavel Eliminyro (eliminyro)" }
 ]
 requires-python = ">=3.11"
 classifiers = [
