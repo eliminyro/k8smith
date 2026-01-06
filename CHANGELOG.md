@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-01-06
+
+### Changes
+
+- Merge pull request #2 from eliminyro/fix/author-name (a21f0fd)
+- [FIX] Update author name in package metadata (ac53fe6)
+- Merge pull request #1 from eliminyro/fix/release-token (7aa2eb8)
+- [CI] Use RELEASE_TOKEN for protected branch push (1337c83)
+
 ## [0.2.1] - 2026-01-06
 
 ### Changes
