@@ -14,6 +14,8 @@ Utilities for collecting and serializing manifests.
 
 ## YAML Serialization
 
-::: k8smith.output.yaml.to_yaml
+::: k8smith.output.yaml.dump
 
-::: k8smith.output.yaml.to_file
+::: k8smith.output.yaml.dump_one
+
+::: k8smith.output.yaml.load

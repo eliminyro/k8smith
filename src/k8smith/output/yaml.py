@@ -94,11 +94,5 @@ def load(yaml_str: str) -> list[dict]:
 
     Returns:
         List of resource dicts
-
-    Example:
-        >>> yaml_str = "apiVersion: v1\\nkind: Namespace\\nmetadata:\\n  name: test"
-        >>> resources = load(yaml_str)
-        >>> resources[0]["kind"]
-        'Namespace'
     """
     return [doc for doc in yaml.safe_load_all(yaml_str) if doc]
