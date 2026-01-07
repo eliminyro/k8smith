@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-01-07
+
+### Changes
+
+- [FEAT] Add Kubernetes Ingress resource support (#5) (e8cd9b6)
+
 ## [0.2.4] - 2026-01-07
 
 ### Changes
