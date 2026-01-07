@@ -512,6 +512,89 @@ class ServiceSpec(KubeModel):
 
 
 # =============================================================================
+# Ingress
+# =============================================================================
+
+
+class IngressBackend(KubeModel):
+    """Ingress backend configuration.
+
+    Example:
+        >>> IngressBackend(service={"name": "web", "port": {"number": 80}})
+    """
+
+    service: dict  # {"name": "svc", "port": {"number": 80} or {"name": "http"}}
+    resource: dict | None = None  # for custom resources (e.g., storage bucket)
+
+
+class HTTPIngressPath(KubeModel):
+    """HTTP Ingress path configuration.
+
+    Example:
+        >>> HTTPIngressPath(
+        ...     path="/api",
+        ...     path_type="Prefix",
+        ...     backend=IngressBackend(service={"name": "api", "port": {"number": 8080}}),
+        ... )
+    """
+
+    path: str | None = None
+    path_type: Literal["Exact", "Prefix", "ImplementationSpecific"] = Field(alias="pathType")
+    backend: IngressBackend
+
+
+class IngressRule(KubeModel):
+    """Ingress rule configuration.
+
+    Example:
+        >>> IngressRule(
+        ...     host="example.com",
+        ...     http={"paths": [{"path": "/", "pathType": "Prefix", "backend": {...}}]},
+        ... )
+    """
+
+    host: str | None = None
+    http: dict | None = None  # {"paths": [HTTPIngressPath, ...]}
+
+
+class IngressTLS(KubeModel):
+    """Ingress TLS configuration.
+
+    Example:
+        >>> IngressTLS(hosts=["example.com"], secret_name="tls-secret")
+    """
+
+    hosts: list[str] | None = None
+    secret_name: str | None = Field(default=None, alias="secretName")
+
+
+class IngressSpec(KubeModel):
+    """Ingress specification.
+
+    Example:
+        >>> IngressSpec(
+        ...     name="web-ingress",
+        ...     namespace="production",
+        ...     rules=[
+        ...         IngressRule(
+        ...             host="example.com",
+        ...             http={"paths": [{"path": "/", "pathType": "Prefix", "backend": {...}}]},
+        ...         )
+        ...     ],
+        ... )
+    """
+
+    name: str
+    namespace: str
+    labels: dict[str, str] | None = None
+    annotations: dict[str, str] | None = None
+    ingress_class_name: str | None = Field(default=None, alias="ingressClassName")
+    default_backend: IngressBackend | None = Field(default=None, alias="defaultBackend")
+    rules: list[IngressRule] | None = None
+    tls: list[IngressTLS] | None = None
+
+
+# =============================================================================
 # Other Resources
 # =============================================================================
 

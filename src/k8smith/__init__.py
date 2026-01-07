@@ -13,6 +13,7 @@ from k8smith.core.daemonset import build_daemonset
 # Core builders
 from k8smith.core.deployment import build_deployment
 from k8smith.core.hpa import build_hpa
+from k8smith.core.ingress import build_ingress
 
 # Core models
 from k8smith.core.models import (
@@ -25,6 +26,11 @@ from k8smith.core.models import (
     DeploymentSpec,
     EnvFromSource,
     EnvVar,
+    HTTPIngressPath,
+    IngressBackend,
+    IngressRule,
+    IngressSpec,
+    IngressTLS,
     PodSpec,
     PodTemplateSpec,
     PolicyRule,
@@ -88,6 +94,11 @@ __all__ = [
     "DeploymentSpec",
     "EnvFromSource",
     "EnvVar",
+    "HTTPIngressPath",
+    "IngressBackend",
+    "IngressRule",
+    "IngressSpec",
+    "IngressTLS",
     "PodSpec",
     "PodTemplateSpec",
     "Probe",
@@ -102,6 +113,7 @@ __all__ = [
     "VolumeMount",
     # Core Builders
     "build_deployment",
+    "build_ingress",
     "build_service",
     "build_statefulset",
     "build_daemonset",
