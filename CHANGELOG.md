@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-01-07
+
+### Changes
+
+- [DOCS] Document ResourceBuilder and KubeModel for custom resources (#7) (f4387c3)
+
 ## [0.4.0] - 2026-01-07
 
 ### Changes
