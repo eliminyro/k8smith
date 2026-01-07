@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
+from k8smith.core.builder import ResourceBuilder
 from k8smith.core.models import StatefulSetSpec
 
 
 def build_statefulset(spec: StatefulSetSpec) -> dict:
     """Build a Kubernetes StatefulSet resource.
+
+    Note: selector and template are handled manually because:
+    1. selector must be wrapped as {"matchLabels": ...} in output
+    2. selector labels must be merged into template.metadata.labels
+       (Kubernetes requires pod labels to match the selector)
+    3. selector auto-generates from spec.name if not provided
+    These cross-field dependencies can't be expressed in ResourceBuilder.
 
     Args:
         spec: StatefulSet specification
@@ -14,10 +22,8 @@ def build_statefulset(spec: StatefulSetSpec) -> dict:
     Returns:
         Kubernetes StatefulSet resource as a dict
     """
-    # Default selector if not specified
+    # Build selector and merge into template labels
     selector = spec.selector or {"app.kubernetes.io/name": spec.name}
-
-    # Build pod template with selector merged into labels
     template_dict = spec.template.to_dict()
     template_dict.setdefault("metadata", {})
     template_dict["metadata"]["labels"] = {
@@ -25,42 +31,11 @@ def build_statefulset(spec: StatefulSetSpec) -> dict:
         **template_dict["metadata"].get("labels", {}),
     }
 
-    statefulset: dict = {
-        "apiVersion": "apps/v1",
-        "kind": "StatefulSet",
-        "metadata": {
-            "name": spec.name,
-            "namespace": spec.namespace,
-        },
-        "spec": {
-            "serviceName": spec.service_name,
-            "selector": {"matchLabels": selector},
-            "template": template_dict,
-        },
-    }
+    # Use ResourceBuilder for everything except selector and template
+    resource = ResourceBuilder.build(
+        spec, "apps/v1", "StatefulSet", skip_fields={"selector", "template"}
+    )
+    resource["spec"]["selector"] = {"matchLabels": selector}
+    resource["spec"]["template"] = template_dict
 
-    # Add optional metadata fields
-    if spec.labels:
-        statefulset["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        statefulset["metadata"]["annotations"] = spec.annotations
-
-    # Add optional spec fields
-    if spec.replicas is not None:
-        statefulset["spec"]["replicas"] = spec.replicas
-    if spec.volume_claim_templates:
-        statefulset["spec"]["volumeClaimTemplates"] = spec.volume_claim_templates
-    if spec.pod_management_policy:
-        statefulset["spec"]["podManagementPolicy"] = spec.pod_management_policy
-    if spec.update_strategy:
-        statefulset["spec"]["updateStrategy"] = spec.update_strategy
-    if spec.revision_history_limit is not None:
-        statefulset["spec"]["revisionHistoryLimit"] = spec.revision_history_limit
-    if spec.min_ready_seconds is not None:
-        statefulset["spec"]["minReadySeconds"] = spec.min_ready_seconds
-    if spec.persistent_volume_claim_retention_policy:
-        statefulset["spec"]["persistentVolumeClaimRetentionPolicy"] = (
-            spec.persistent_volume_claim_retention_policy
-        )
-
-    return statefulset
+    return resource

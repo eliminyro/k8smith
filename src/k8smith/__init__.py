@@ -4,8 +4,10 @@ from importlib.metadata import version
 
 __version__ = version("k8smith")
 
+# Generic builder for custom resources
 # GKE extension namespace
 from k8smith import gke
+from k8smith.core.builder import ResourceBuilder
 from k8smith.core.configmap import build_configmap
 from k8smith.core.cronjob import build_cronjob
 from k8smith.core.daemonset import build_daemonset
@@ -31,6 +33,7 @@ from k8smith.core.models import (
     IngressRule,
     IngressSpec,
     IngressTLS,
+    KubeModel,
     PodSpec,
     PodTemplateSpec,
     PolicyRule,
@@ -78,6 +81,9 @@ from k8smith.validation import (
 
 __all__ = [
     "__version__",
+    # Base classes for custom resources
+    "KubeModel",
+    "ResourceBuilder",
     # RBAC Models
     "ClusterRoleBindingSpec",
     "ClusterRoleSpec",

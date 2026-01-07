@@ -5,55 +5,13 @@ Provides builders for Role, ClusterRole, RoleBinding, and ClusterRoleBinding res
 
 from __future__ import annotations
 
+from k8smith.core.builder import ResourceBuilder
 from k8smith.core.models import (
     ClusterRoleBindingSpec,
     ClusterRoleSpec,
-    PolicyRule,
     RoleBindingSpec,
-    RoleBindingSubject,
-    RoleRef,
     RoleSpec,
 )
-
-
-def _build_rule(rule: PolicyRule) -> dict:
-    """Build a policy rule dict."""
-    result: dict = {"verbs": rule.verbs}
-
-    if rule.api_groups is not None:
-        result["apiGroups"] = rule.api_groups
-    if rule.resources:
-        result["resources"] = rule.resources
-    if rule.resource_names:
-        result["resourceNames"] = rule.resource_names
-    if rule.non_resource_urls:
-        result["nonResourceURLs"] = rule.non_resource_urls
-
-    return result
-
-
-def _build_subject(subject: RoleBindingSubject) -> dict:
-    """Build a subject dict."""
-    result: dict = {
-        "kind": subject.kind,
-        "name": subject.name,
-    }
-
-    if subject.namespace:
-        result["namespace"] = subject.namespace
-    if subject.api_group:
-        result["apiGroup"] = subject.api_group
-
-    return result
-
-
-def _build_role_ref(role_ref: RoleRef) -> dict:
-    """Build a roleRef dict."""
-    return {
-        "apiGroup": role_ref.api_group,
-        "kind": role_ref.kind,
-        "name": role_ref.name,
-    }
 
 
 def build_role(spec: RoleSpec) -> dict:
@@ -76,26 +34,13 @@ def build_role(spec: RoleSpec) -> dict:
         ... )
         >>> role = build_role(spec)
     """
-    role: dict = {
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "kind": "Role",
-        "metadata": {
-            "name": spec.name,
-            "namespace": spec.namespace,
-        },
-    }
-
-    # Add optional metadata fields
-    if spec.labels:
-        role["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        role["metadata"]["annotations"] = spec.annotations
-
-    # Add rules
-    if spec.rules:
-        role["rules"] = [_build_rule(rule) for rule in spec.rules]
-
-    return role
+    return ResourceBuilder.build(
+        spec,
+        "rbac.authorization.k8s.io/v1",
+        "Role",
+        include_spec=False,
+        top_level_fields={"rules"},
+    )
 
 
 def build_clusterrole(spec: ClusterRoleSpec) -> dict:
@@ -121,29 +66,13 @@ def build_clusterrole(spec: ClusterRoleSpec) -> dict:
         ... )
         >>> cluster_role = build_clusterrole(spec)
     """
-    cluster_role: dict = {
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "kind": "ClusterRole",
-        "metadata": {
-            "name": spec.name,
-        },
-    }
-
-    # Add optional metadata fields
-    if spec.labels:
-        cluster_role["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        cluster_role["metadata"]["annotations"] = spec.annotations
-
-    # Add rules
-    if spec.rules:
-        cluster_role["rules"] = [_build_rule(rule) for rule in spec.rules]
-
-    # Add aggregation rule (for aggregated ClusterRoles)
-    if spec.aggregation_rule:
-        cluster_role["aggregationRule"] = spec.aggregation_rule
-
-    return cluster_role
+    return ResourceBuilder.build(
+        spec,
+        "rbac.authorization.k8s.io/v1",
+        "ClusterRole",
+        include_spec=False,
+        top_level_fields={"rules", "aggregation_rule"},
+    )
 
 
 def build_rolebinding(spec: RoleBindingSpec) -> dict:
@@ -167,27 +96,13 @@ def build_rolebinding(spec: RoleBindingSpec) -> dict:
         ... )
         >>> binding = build_rolebinding(spec)
     """
-    binding: dict = {
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "kind": "RoleBinding",
-        "metadata": {
-            "name": spec.name,
-            "namespace": spec.namespace,
-        },
-        "roleRef": _build_role_ref(spec.role_ref),
-    }
-
-    # Add optional metadata fields
-    if spec.labels:
-        binding["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        binding["metadata"]["annotations"] = spec.annotations
-
-    # Add subjects
-    if spec.subjects:
-        binding["subjects"] = [_build_subject(subj) for subj in spec.subjects]
-
-    return binding
+    return ResourceBuilder.build(
+        spec,
+        "rbac.authorization.k8s.io/v1",
+        "RoleBinding",
+        include_spec=False,
+        top_level_fields={"role_ref", "subjects"},
+    )
 
 
 def build_clusterrolebinding(spec: ClusterRoleBindingSpec) -> dict:
@@ -214,23 +129,10 @@ def build_clusterrolebinding(spec: ClusterRoleBindingSpec) -> dict:
         ... )
         >>> binding = build_clusterrolebinding(spec)
     """
-    binding: dict = {
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "kind": "ClusterRoleBinding",
-        "metadata": {
-            "name": spec.name,
-        },
-        "roleRef": _build_role_ref(spec.role_ref),
-    }
-
-    # Add optional metadata fields
-    if spec.labels:
-        binding["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        binding["metadata"]["annotations"] = spec.annotations
-
-    # Add subjects
-    if spec.subjects:
-        binding["subjects"] = [_build_subject(subj) for subj in spec.subjects]
-
-    return binding
+    return ResourceBuilder.build(
+        spec,
+        "rbac.authorization.k8s.io/v1",
+        "ClusterRoleBinding",
+        include_spec=False,
+        top_level_fields={"role_ref", "subjects"},
+    )
