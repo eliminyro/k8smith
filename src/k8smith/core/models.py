@@ -102,9 +102,12 @@ class ContainerPort(KubeModel):
 
     Example:
         >>> ContainerPort(container_port=8080, name="http")
+        >>> ContainerPort(container_port=80, host_port=8080)
     """
 
     container_port: int = Field(alias="containerPort")
+    host_port: int | None = Field(default=None, alias="hostPort")
+    host_ip: str | None = Field(default=None, alias="hostIP")
     name: str | None = None
     protocol: Literal["TCP", "UDP", "SCTP"] = "TCP"
 
