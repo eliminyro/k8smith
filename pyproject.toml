@@ -1,6 +1,6 @@
 [project]
 name = "k8smith"
-version = "0.3.0"
+version = "0.4.0"
 description = "A transparent, lightweight Kubernetes manifest generator"
 readme = "README.md"
 license = { text = "GPL-3.0-only" }

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-01-07
+
+### Changes
+
+- [FEAT] Add generic ResourceBuilder for custom Kubernetes resources (#6) (449bc42)
+
 ## [0.3.0] - 2026-01-07
 
 ### Changes
