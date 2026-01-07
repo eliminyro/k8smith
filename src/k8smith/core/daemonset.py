@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
+from k8smith.core.builder import ResourceBuilder
 from k8smith.core.models import DaemonSetSpec
 
 
 def build_daemonset(spec: DaemonSetSpec) -> dict:
     """Build a Kubernetes DaemonSet resource.
+
+    Note: selector and template are handled manually because:
+    1. selector must be wrapped as {"matchLabels": ...} in output
+    2. selector labels must be merged into template.metadata.labels
+       (Kubernetes requires pod labels to match the selector)
+    3. selector auto-generates from spec.name if not provided
+    These cross-field dependencies can't be expressed in ResourceBuilder.
 
     Args:
         spec: DaemonSet specification
@@ -14,10 +22,8 @@ def build_daemonset(spec: DaemonSetSpec) -> dict:
     Returns:
         Kubernetes DaemonSet resource as a dict
     """
-    # Default selector if not specified
+    # Build selector and merge into template labels
     selector = spec.selector or {"app.kubernetes.io/name": spec.name}
-
-    # Build pod template with selector merged into labels
     template_dict = spec.template.to_dict()
     template_dict.setdefault("metadata", {})
     template_dict["metadata"]["labels"] = {
@@ -25,31 +31,11 @@ def build_daemonset(spec: DaemonSetSpec) -> dict:
         **template_dict["metadata"].get("labels", {}),
     }
 
-    daemonset: dict = {
-        "apiVersion": "apps/v1",
-        "kind": "DaemonSet",
-        "metadata": {
-            "name": spec.name,
-            "namespace": spec.namespace,
-        },
-        "spec": {
-            "selector": {"matchLabels": selector},
-            "template": template_dict,
-        },
-    }
+    # Use ResourceBuilder for everything except selector and template
+    resource = ResourceBuilder.build(
+        spec, "apps/v1", "DaemonSet", skip_fields={"selector", "template"}
+    )
+    resource["spec"]["selector"] = {"matchLabels": selector}
+    resource["spec"]["template"] = template_dict
 
-    # Add optional metadata fields
-    if spec.labels:
-        daemonset["metadata"]["labels"] = spec.labels
-    if spec.annotations:
-        daemonset["metadata"]["annotations"] = spec.annotations
-
-    # Add optional spec fields
-    if spec.update_strategy:
-        daemonset["spec"]["updateStrategy"] = spec.update_strategy
-    if spec.min_ready_seconds is not None:
-        daemonset["spec"]["minReadySeconds"] = spec.min_ready_seconds
-    if spec.revision_history_limit is not None:
-        daemonset["spec"]["revisionHistoryLimit"] = spec.revision_history_limit
-
-    return daemonset
+    return resource

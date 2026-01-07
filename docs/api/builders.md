@@ -2,6 +2,30 @@
 
 Builder functions that convert spec models into Kubernetes manifest dictionaries.
 
+## Custom Resources
+
+Use `ResourceBuilder` to create builders for custom Kubernetes resources:
+
+```python
+from k8smith import ResourceBuilder, KubeModel
+from pydantic import Field
+
+class MyCustomSpec(KubeModel):
+    name: str
+    namespace: str = "default"
+    replicas: int = 1
+    custom_field: str = Field(alias="customField")
+
+def build_my_resource(spec: MyCustomSpec) -> dict:
+    return ResourceBuilder.build(spec, "example.com/v1", "MyResource")
+
+# Usage
+spec = MyCustomSpec(name="my-app", custom_field="value")
+manifest = build_my_resource(spec)
+```
+
+::: k8smith.core.builder.ResourceBuilder
+
 ## Workloads
 
 ::: k8smith.core.deployment.build_deployment
