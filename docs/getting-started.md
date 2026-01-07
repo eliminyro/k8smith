@@ -64,6 +64,69 @@ spec = ServiceSpec(
 service = build_service(spec)
 ```
 
+### Creating an Ingress
+
+```python
+from k8smith import IngressSpec, IngressRule, IngressTLS, build_ingress
+
+spec = IngressSpec(
+    name="web-ingress",
+    namespace="default",
+    rules=[
+        IngressRule(
+            host="example.com",
+            http={
+                "paths": [
+                    {
+                        "path": "/",
+                        "pathType": "Prefix",
+                        "backend": {"service": {"name": "nginx", "port": {"number": 80}}},
+                    }
+                ]
+            },
+        )
+    ],
+)
+
+ingress = build_ingress(spec)
+```
+
+To target a specific ingress controller, use `ingress_class_name`:
+
+```python
+spec = IngressSpec(
+    name="web-ingress",
+    namespace="default",
+    ingress_class_name="traefik",  # or: haproxy, contour, etc.
+    rules=[...],
+)
+```
+
+With TLS:
+
+```python
+spec = IngressSpec(
+    name="secure-ingress",
+    namespace="default",
+    annotations={"cert-manager.io/cluster-issuer": "letsencrypt-prod"},
+    tls=[IngressTLS(hosts=["example.com"], secret_name="example-tls")],
+    rules=[
+        IngressRule(
+            host="example.com",
+            http={
+                "paths": [
+                    {
+                        "path": "/",
+                        "pathType": "Prefix",
+                        "backend": {"service": {"name": "nginx", "port": {"number": 80}}},
+                    }
+                ]
+            },
+        )
+    ],
+)
+```
+
 ### Combining Resources with Manifest
 
 ```python
@@ -119,6 +182,7 @@ resources = ResourceRequirements(
 |----------|------------|------------------|
 | Deployment | `DeploymentSpec` | `build_deployment()` |
 | Service | `ServiceSpec` | `build_service()` |
+| Ingress | `IngressSpec` | `build_ingress()` |
 | StatefulSet | `StatefulSetSpec` | `build_statefulset()` |
 | DaemonSet | `DaemonSetSpec` | `build_daemonset()` |
 | CronJob | `CronJobSpec` | `build_cronjob()` |

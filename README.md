@@ -114,6 +114,7 @@ gateway = build_gateway(GatewaySpec(
 |----------|---------|
 | Deployment | `build_deployment(DeploymentSpec)` |
 | Service | `build_service(ServiceSpec)` |
+| Ingress | `build_ingress(IngressSpec)` |
 | StatefulSet | `build_statefulset(StatefulSetSpec)` |
 | DaemonSet | `build_daemonset(DaemonSetSpec)` |
 | CronJob | `build_cronjob(CronJobSpec)` |
