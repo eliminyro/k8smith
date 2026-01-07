@@ -4,10 +4,27 @@ Pydantic models for Kubernetes resource specifications.
 
 ## Base Models
 
+`KubeModel` is the base class for all specification models. Extend it to create custom resource specs:
+
+```python
+from k8smith import KubeModel, ResourceBuilder
+from pydantic import Field
+
+class MySpec(KubeModel):
+    name: str
+    namespace: str = "default"
+    my_field: str = Field(alias="myField")  # outputs as camelCase
+```
+
+Key features:
+
+- Excludes `None` values from output
+- Supports Pydantic field aliases for camelCase keys
+- Provides `.to_dict()` for nested model serialization
+
 ::: k8smith.core.models.KubeModel
     options:
       show_bases: false
-      members: false
 
 ## Resource Specifications
 
