@@ -229,6 +229,33 @@ class Toleration(KubeModel):
     toleration_seconds: int | None = Field(default=None, alias="tolerationSeconds")
 
 
+class TopologySpreadConstraint(KubeModel):
+    """Pod topology spread constraint.
+
+    Example:
+        >>> TopologySpreadConstraint(
+        ...     max_skew=1,
+        ...     topology_key="kubernetes.io/hostname",
+        ...     when_unsatisfiable="ScheduleAnyway",
+        ... )
+    """
+
+    max_skew: int = Field(alias="maxSkew")
+    topology_key: str = Field(alias="topologyKey")
+    when_unsatisfiable: Literal["DoNotSchedule", "ScheduleAnyway"] = Field(
+        alias="whenUnsatisfiable"
+    )
+    label_selector: dict | None = Field(default=None, alias="labelSelector")
+    match_label_keys: list[str] | None = Field(default=None, alias="matchLabelKeys")
+    min_domains: int | None = Field(default=None, alias="minDomains")
+    node_affinity_policy: Literal["Honor", "Ignore"] | None = Field(
+        default=None, alias="nodeAffinityPolicy"
+    )
+    node_taints_policy: Literal["Honor", "Ignore"] | None = Field(
+        default=None, alias="nodeTaintsPolicy"
+    )
+
+
 # =============================================================================
 # Container
 # =============================================================================
@@ -324,6 +351,9 @@ class PodSpec(KubeModel):
         default=None, alias="terminationGracePeriodSeconds"
     )
     priority_class_name: str | None = Field(default=None, alias="priorityClassName")
+    topology_spread_constraints: list[TopologySpreadConstraint] | None = Field(
+        default=None, alias="topologySpreadConstraints"
+    )
 
 
 class PodTemplateSpec(KubeModel):

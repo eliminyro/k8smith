@@ -7,6 +7,7 @@ from k8smith import (
     PodTemplateSpec,
     ResourceQuantity,
     ResourceRequirements,
+    TopologySpreadConstraint,
     Volume,
     VolumeMount,
     build_deployment,
@@ -216,3 +217,49 @@ class TestBuildDeployment:
         assert len(mounts) == 1
         assert mounts[0]["name"] == "secrets"
         assert mounts[0]["mountPath"] == "/mnt/secrets"
+
+    def test_deployment_with_topology_spread_constraints(self):
+        """Test deployment with topology spread constraints."""
+        spec = DeploymentSpec(
+            name="web",
+            namespace="production",
+            selector={"app": "web"},
+            template=PodTemplateSpec(
+                spec=PodSpec(
+                    containers=[Container(name="web", image="nginx")],
+                    topology_spread_constraints=[
+                        TopologySpreadConstraint(
+                            max_skew=1,
+                            topology_key="kubernetes.io/hostname",
+                            when_unsatisfiable="ScheduleAnyway",
+                            label_selector={"matchLabels": {"app": "web"}},
+                        ),
+                    ],
+                ),
+            ),
+        )
+
+        result = build_deployment(spec)
+        pod_spec = result["spec"]["template"]["spec"]
+
+        assert len(pod_spec["topologySpreadConstraints"]) == 1
+        tsc = pod_spec["topologySpreadConstraints"][0]
+        assert tsc["maxSkew"] == 1
+        assert tsc["topologyKey"] == "kubernetes.io/hostname"
+        assert tsc["whenUnsatisfiable"] == "ScheduleAnyway"
+        assert tsc["labelSelector"] == {"matchLabels": {"app": "web"}}
+
+    def test_deployment_without_topology_spread_constraints(self):
+        """Topology spread constraints omitted from output when not set."""
+        spec = DeploymentSpec(
+            name="web",
+            namespace="default",
+            template=PodTemplateSpec(
+                spec=PodSpec(containers=[Container(name="web", image="nginx")])
+            ),
+        )
+
+        result = build_deployment(spec)
+        pod_spec = result["spec"]["template"]["spec"]
+
+        assert "topologySpreadConstraints" not in pod_spec
