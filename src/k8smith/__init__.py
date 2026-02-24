@@ -49,6 +49,7 @@ from k8smith.core.models import (
     ServiceSpec,
     StatefulSetSpec,
     Toleration,
+    TopologySpreadConstraint,
     Volume,
     VolumeMount,
 )
@@ -115,6 +116,7 @@ __all__ = [
     "ServicePort",
     "StatefulSetSpec",
     "Toleration",
+    "TopologySpreadConstraint",
     "Volume",
     "VolumeMount",
     # Core Builders
