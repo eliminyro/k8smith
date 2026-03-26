@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-03-26
+
+### Changes
+
+- [FIX] Add missing appProtocol field to ContainerPort (#10) (61cafb1)
+
 ## [0.6.0] - 2026-03-26
 
 ### Changes
