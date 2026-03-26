@@ -9,9 +9,10 @@ for clean YAML output.
 
 from __future__ import annotations
 
+import warnings
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_serializer
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 # =============================================================================
 # Base Model
@@ -25,6 +26,31 @@ class KubeModel(BaseModel):
     """
 
     model_config = ConfigDict(populate_by_name=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _warn_unknown_fields(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+
+        # Collect all known field names and aliases
+        known: set[str] = set()
+        for field_name, field_info in cls.model_fields.items():
+            known.add(field_name)
+            if field_info.alias:
+                known.add(field_info.alias)
+
+        unknown = set(data.keys()) - known
+        if unknown:
+            warnings.warn(
+                f"{cls.__name__}: unknown field(s) {unknown} — "
+                f"these will be silently ignored. "
+                f"Valid fields: {sorted(known)}",
+                UserWarning,
+                stacklevel=2,
+            )
+
+        return data
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize to a dict suitable for Kubernetes YAML.
