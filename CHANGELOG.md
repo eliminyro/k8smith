@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-03-26
+
+### Changes
+
+- [FEAT] Warn on unknown fields passed to KubeModel subclasses (#9) (9f869b7)
+
 ## [0.5.0] - 2026-02-24
 
 ### Changes
