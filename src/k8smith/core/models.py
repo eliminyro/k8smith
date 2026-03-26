@@ -136,6 +136,7 @@ class ContainerPort(KubeModel):
     host_ip: str | None = Field(default=None, alias="hostIP")
     name: str | None = None
     protocol: Literal["TCP", "UDP", "SCTP"] = "TCP"
+    app_protocol: str | None = Field(default=None, alias="appProtocol")
 
 
 class EnvVar(KubeModel):
